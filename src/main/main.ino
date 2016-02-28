@@ -1,3 +1,4 @@
+// This is--presently--unfinished and untested.
 
 #include<LiquidCrystal.h> //Display lib
 
@@ -12,6 +13,8 @@ void setup() {
   period = 0; //no floating values, no sir.
   pinMode(pin, INPUT);  //reading period from pin(2) via PulseIn
   
+  lcd.begin(16,2);  // I don't actually know the dimensions of my screen yet, but these are popular dimensions so why not.
+                    // As for why on earth this library is column, row I will never know. Probably due to hardware-interface addressing but w/e. 
 }
 
 void loop() {
