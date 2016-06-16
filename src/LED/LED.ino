@@ -48,6 +48,10 @@ void phatFadeLoop(uint32_t rgb) {
                                                 //this means that if a pixel is called, it will never clear. Only important when thinking of tach.
     strip.show(); // fin
     delay(40);    // 40ms delay. Could be a wide variety of things
+    
+  }
+  //return
+}
     // attachInterrupt() is, naturally, an interrupt. delay() is also an interrupt so it cannot happen at the same time.
     // Since, at the time of writing, I am initially planning on using attachInterrupt() to catch pulses, it might fight with the delay()
     // just above. In fact, the more likely issue will be delay() holding back the interrupt and skipping pulses.
@@ -83,7 +87,7 @@ void phatFadeLoop(uint32_t rgb) {
     // ^ this line is all anyone should read. ^
 
     // Coding gets people in the habit of abysmal spelling. No compiler would ever have the audacity to tell you your own variables are misspelled. 
-  }
-  //return
-}
 
+    // It's been great lads, here I am reading through a million and one people's projects on creating frequency counters and all of them failed to mention that 
+    // pulseIn() is part of the standard library and WORKS JUST DANDY FOR 10us-50kHz. I mean honestly, the work is already done.
+    // Granted, it still uses interrupts to take the pulse in so the interrupt (bad) math is still relevant but I mean come on...
