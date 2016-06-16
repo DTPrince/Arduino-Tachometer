@@ -22,7 +22,7 @@ void loop() {
   phatFadeLoop(strip.Color(255, 0, 255));   // purp
   phatFadeLoop(strip.Color(255, 255, 0));   // yellow
   phatFadeLoop(strip.Color(0, 255, 255));   // cyan
-  phatFadeLoop(strip.Color(255, 255, 255)); // yellow
+  phatFadeLoop(strip.Color(255, 255, 255)); // white
   
 }
 
@@ -47,7 +47,19 @@ void phatFadeLoop(uint32_t rgb) {
                                                 //Important to note that since Clear is not called, the pixel will remain active in mem until program concludes.
                                                 //this means that if a pixel is called, it will never clear. Only important when thinking of tach.
     strip.show(); // fin
-    delay(50);    // 40ms delay. Could be a wide variety of things
+    delay(40);    // 40ms delay. Could be a wide variety of things
+    // attachInterrupt() is, naturally, an interrupt. delay() is also an interrupt so it cannot happen at the same time.
+    // Since, at the time of writing, I am initially planning on using attachInterrupt() to catch pulses, it might fight with the delay()
+    // just above. In fact, the more likely issue will be delay() holding back the interrupt and skipping pulses.
+    // Evidently, delayMicroseconds() does not use a counter so it should work without calling an ISR (interrupt service routine). 
+    // Since an ISR is like a first date and drops everything for you, frequency should be declared volatile since it will change seemingly at random so far as the compiler can tell.
+    // thinking: attachInterrupt(digitalPinToInterrupt(PIN_FREQ), ISR-to-call, RISING);
+    // RISING means it will interrupt when the pin goes from low->high. I wonder how it would catch sinusoids.
+    // Probably would just watch for forward conduction on the transistor. Which would be weird as it would act as a small signal amplifier for the non-linear portion of the IV curve.
+    // since the interrupt should only increment freq, it should be an extraordinarily fast interrupt. 
+    // I don't know how time will be kept at this moment though. (CLK register?)
+    // 
+    
   }
   //return
 }
