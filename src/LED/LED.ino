@@ -81,7 +81,8 @@ void phatFadeLoop(uint32_t rgb) {
     
     // A better way of looking at it is at idle, there will be an interrupt every ~91ms, and at redline there will be an interrupt every ~11ms. Easily workable.
     // ^ this line is all anyone should read. ^
-    
+
+    // Coding gets people in the habit of abysmal spelling. No compiler would ever have the audacity to tell you your own variables are misspelled. 
   }
   //return
 }
