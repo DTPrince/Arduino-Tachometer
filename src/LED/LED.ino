@@ -66,6 +66,21 @@ void phatFadeLoop(uint32_t rgb) {
     // logs the time of the tick and calculate frequency from the time diff between itself and the next node (would require populating before use)
     // Then it would move the the next node and overwrite it, continuing the loop. tail = head.
     
+    // millis() diffs is an interesting option worth thinking about, the only problem being that the update would still have to be regular.
+    // Which presents a problem because although diffs can be floating wherever (who cares about start/fin when you just want the diff), 
+    // triggering a new segment to watch (start/fin pair. Likely start = fin, fin = new <whatever>) would be unreliable. The diff would always have a ~fairly accurate
+    // time measurement but the span could not be of a guaranteed length. Maybe that won't matter, who knows. 
+
+    // Napkin math: if an idle is at ~700 RPM, that's 11&2/3rds rps. 11 ticks a second is a pleasantly large number to work with. 
+    // This means that 11-12 interrupts would be called every second at idle, or ~20ms tops (probably much less) of pin 2 hogging the Arduino.
+    // At 3.2k RPM, that's 53&1/3rd rps. Significant because it is normal to accelerate between those rpm ranges w/ a 4.0L in gears 1-3. 
+    // My car is manual so it gives me even more slack in RPM calculations. However, 53 pulses a second is now ~100ms of time (I'm being extremely generous when saying an increment will take 2ms. It's probably less than 1.)
+    // At redline: 5.6k RPM = 93&1/3rd rps. 1/5th of a second could be worse, honestly. 
+    // If I don't delay strip.show()'s and let it push whenever it wants I wouldn't even have to worry about it. Additionally, the interrupts do not happen in a chunk, they're continuously spread over the second.
+    // Lots of cracks that can be filled.
+    
+    // A better way of looking at it is at idle, there will be an interrupt every ~91ms, and at redline there will be an interrupt every ~11ms. Easily workable.
+    // ^ this line is all anyone should read. ^
     
   }
   //return
