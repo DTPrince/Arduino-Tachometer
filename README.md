@@ -36,7 +36,10 @@ Which is honestly a completely different thing.
 Now, in the `LCD` directory I will have the LCD screen implementation. Eventually.  
 
 ### LED
+
 In the `LED` directory I will have the LED-strip implementation.
+
+Needs [Adafruit's NeoPixel Library](https://github.com/adafruit/Adafruit_NeoPixel) to function.
 
 With 60 LEDs per meter, I can have - among other things - the longest tachometer in the world (really puts the *meter* in tacho*meter*, ehh? Got 'em!), and 1 LED equal to 100 RPMs. The 242 a.k.a. 4.0L, his holiness, the king of running on dirt, AMC Straight-6 has a limiter at 5.6k RPMs so I can easily fit the whole range on the strip. I plan on color-coding the LEDs to go from green->yellow->red so it has some reference and swag points.  
 (Side note: I'm not sure I'll actually ever run this thing as a daily, that would take a bit o' work to shorten it to less than a meter. Though maybe a meter strip on the dash would be cool. Who knows.)  
