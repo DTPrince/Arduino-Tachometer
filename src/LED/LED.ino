@@ -44,11 +44,10 @@ void loop() {
       float frequency = FreqMeasure.countToFrequency(sum / i);  // float is fine, resolution is in 100's anyhow.
       //SEND frequency to color algorithm here. freq is in the second if scope
       uint16_t leadLED = (frequency / 100) - 1; // -1 because they are indexed 0-59. integer type will insure decimals are ignored.
-      
+      test(leadLED, strip.Color(255,0,0));
       
       sum = 0;
       i = 0;
-      strip.show();
     }
   }
 
@@ -59,7 +58,7 @@ void loop() {
 }
 
 uint32_t determineColor(uint16_t &LEDindex) {
-  return strip.Color(0,0,0)); //temp
+  return strip.Color(0,0,0); //temp
                               // could just package my own colors but what the hell. This is clear in intention
 }
 
@@ -67,31 +66,22 @@ void setPixel(uint16_t LEDindex) {
   
 }
 
-void phatFadeLoop(uint32_t rgb) {
-  // causes a loop of specified color
-  // forces start at beginning and goes to end. Specifying pixels would require separating loop from function call.
-  // easy to do but not needed.
-  uint8_t r, g, b;
-  for(uint16_t i = 0; i < strip.numPixels()+4; i++) {
-    strip.setPixelColor(i, rgb);
-    //extract colors:
-    r = (uint8_t)(rgb >> 16),
-    g = (uint8_t)(rgb >> 8),
-    b = (uint8_t)rgb;
-    // Possible bug with crazy colors, the color passed might not be what I want on the previous LEDs.
-    // Easy fix would be to call getPixelColor and populate r,g,b with codes and then throw them to setPixelColor()
-    // But that would be expensive. Will probably have to come up with something for the tach where it gets more red as the rpms climb.
-    strip.setPixelColor(i-1, r >> 1, g >> 1, b >> 1);
-    strip.setPixelColor(i-2, r >> 2, g >> 2, b >> 2);
-    strip.setPixelColor(i-3, r >> 3, g >> 3, b >> 3);
-    strip.setPixelColor(i-4, 0x00, 0x00, 0x00); //set off
-                                                //Important to note that since Clear is not called, the pixel will remain active in mem until program concludes.
-                                                //this means that if a pixel is called, it will never clear. Only important when thinking of tach.
-    strip.show(); // fin
-    delay(40);    // 40ms delay. Could be a wide variety of things
-    
-  }
-  // return
+void test(uint16_t LEDindex, uint32_t rgb) {
+  strip.setPixelColor(LEDindex, rgb); //set lead pixel
+  uint8_t r,g,b;
+  //extract colors:
+  r = (uint8_t)(rgb >> 16),
+  g = (uint8_t)(rgb >> 8),
+  b = (uint8_t)rgb;
+
+  strip.setPixelColor(LEDindex-1, r >> 1, g >> 1, b >> 1);  // dims previous
+  strip.setPixelColor(LEDindex-2, r >> 2, g >> 2, b >> 2);  // double dims double previous
+  strip.setPixelColor(LEDindex-3, r >> 3, g >> 3, b >> 3);  // you get the idea
+  strip.setPixelColor(LEDindex-4, 0x00, 0x00, 0x00);        //set off
+
+  strip.show();
+  //delay is built in the the calling loop, no need for it here. show() can go here or in parent.
+  // here might reduce weird interrupt calls since this frame has the attention.
 }
 
     // attachInterrupt() is, naturally, an interrupt. delay() is also an interrupt so it cannot happen at the same time.
