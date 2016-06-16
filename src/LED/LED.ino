@@ -73,7 +73,7 @@ void phatFadeLoop(uint32_t rgb) {
     delay(40);    // 40ms delay. Could be a wide variety of things
     
   }
-  //return
+  // return
 }
 
     // attachInterrupt() is, naturally, an interrupt. delay() is also an interrupt so it cannot happen at the same time.
@@ -116,3 +116,11 @@ void phatFadeLoop(uint32_t rgb) {
     // pulseIn() is part of the standard library and WORKS JUST DANDY FOR 10us-3 MINUTES. I mean honestly, the work is already done.
     // Granted, it still uses interrupts to take the pulse in so the interrupt (bad) math is still relevant but I mean come on...
     // note: 10us = 10^-5 s = 10^5 s^-1 = 100kHz, 3min = who cares.
+
+    // On color determination...
+    // Do I assign every LED a color (maybe with #defs to save space since I know what each LED should be colored anywho) at startup and then pass the leading LED through
+    // a modified dimming function to go back 3 places, dimming accordingly? Or do I have it determine the color to send? Probs the first one just thinking of how I'd implement the latter
+    // I'd have to modify my dimming function to be quite a bit heavier to account for fetching the color of the LED, splicing it, bit shifting, and then moving on to do the same 3 times over.
+    // The fastest way would be to work off of the leading LED but it would lose the nice gradient effect I'm going for. Kinda. It would just make a gradient from the leading.
+    // I could also make a very complicated algorithm to color all the LEDs which could be turned on it's head to color the trailing LED's at a lesser intensity.
+    // Could be clean if I integrated it well at bit level. Something to think about at any rate...
