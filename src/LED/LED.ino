@@ -59,6 +59,13 @@ void phatFadeLoop(uint32_t rgb) {
     // since the interrupt should only increment freq, it should be an extraordinarily fast interrupt. 
     // I don't know how time will be kept at this moment though. (CLK register?)
     // 
+    // One thing I only just realized as I'm perusing time libraries, if I simply increment a tick variable for each rising edge,
+    // I'll incremend indefinitely until it stops, and the delta-t will only grow as well leading to either a number larger than the container
+    // or an extremely memory-hungry progream. Which isn't great for an arduino.
+    // If I were running this on a desktop/laptop, it would be fun to construct a circular queue (maybe even a deque) object that
+    // logs the time of the tick and calculate frequency from the time diff between itself and the next node (would require populating before use)
+    // Then it would move the the next node and overwrite it, continuing the loop. tail = head.
+    
     
   }
   //return
