@@ -24,3 +24,26 @@ I may have to ditch the arduino earlier rather than later in favor of parallel p
 The primary reason for an eventual RPi change is for my sound-system upgrade and wireless charging in the car that turns on when a phone/tablet is placed on or over the pad.
 I'm not starting with the RPI because it is overkill at the moment (probably), has steeper power requirements, and is more unfamiliar to me in terms of programming.
 In a perfect world, I'd learn how to program an Intel Edison and go the module route with boiler-plate code so I don't have to drag things like a stripped-down raspbian but I barely even know where to begin with something like that.
+
+## Why Are There Multiple Files?
+
+Let me tell you, dear Deter.  
+Long story short, I don't have an LCD screen on hand but I *do* have an Adafruit 60LED/m strip.  
+So after hashing out a nice way to run the strip from the 5V PWM 6 pin on an Arduino in /NeoPixel-Playtime/src/neopixel_learnin/ and adjust the brightness of the previous pins, I have returned to conquer the tachometer.  
+Which is honestly a completely different thing.  
+
+### LCD
+Now, in the `LCD` directory I will have the LCD screen implementation. Eventually.  
+
+### LED
+In the `LED` directory I will have the LED-strip implementation.
+
+With 60 LEDs per meter, I can have - among other things - the longest tachometer in the world (really puts the *meter* in tacho*meter*, ehh? Got 'em!), and 1 LED equal to 100 RPMs. The 242 a.k.a. 4.0L, his holiness, the king of running on dirt, AMC Straight-6 has a limiter at 5.6k RPMs so I can easily fit the whole range on the strip. I plan on color-coding the LEDs to go from green->yellow->red so it has some reference and swag points.  
+(Side note: I'm not sure I'll actually ever run this thing as a daily, that would take a bit o' work to shorten it to less than a meter. Though maybe a meter strip on the dash would be cool. Who knows.)  
+If I did ever decide to run this regularly, I would have to sample a nob or something to dim the blindingly-bright LEDs at night. And a proper relay/switch control.
+
+One thing I might consider is leaving lighthouse pixels every 1k rpm or some such to denote how deep in the paint you are. I also just really want to use the pretty blue LED. I could ditch yellow for blue to cut back on one of the active LEDs, which in a perfect world would cut the power requirements in half but I doubt that is true here. I mean, this is the digital world so everything is assumed to be a perfect flower and if anything goes wrong it's a manufacturers defect.
+
+### Binary LED
+
+An idea for trimming down LEDs needed. I imagine this program would have a lot of #defines but be rather simple. with a byte I could easily express the thousands and hundreds places. In fact, I would only need 3 bits for the thousand since I don't need to go above 5 (6 is free).
