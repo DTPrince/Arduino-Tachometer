@@ -1,51 +1,69 @@
+// lib to keep in mind: https://github.com/PaulStoffregen/FreqMeasure
+// I would rather write my own code but that's oft not best practice.
+// This would be done in 30 minutes if I just pulled libs from online.
 
-#include <Adafruit_NeoPixel.h>
+#include <Adafruit_NeoPixel.h>  // pushin pixels.
+#include <FreqMeasure.h>        // I might as well just take advantage of a clean implementation from someone who knows what they're on about.
+                                // Declares a FreqMeasure object as extern in the header. Which is why it looks like one was never initialized
 
 #define PIN_LED_OUT 6     // dig. PWM out pin for LED control
 #define N_LED 60          // number of LEDs per strand. (0-59)
-#define PIN_FREQ 2        // Frequency read pin. Pin 2 isn't PWM and can use ArrachInterrupt()
+#define PIN_FREQ 8        // Frequency read pin. Digital non-PWM
 
 // Side note: 800kHz is a 1.25 us period, so delay times and sampling won't ever really approach that limit (here)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(N_LED, PIN_LED_OUT, NEO_GRB + NEO_KHZ800); //initialize. RGB, 800kHz data rate
 //side note: I don't actually have to convert to frequency if I don't want to. If I do the conversion outside the code it's the same thing when implemented.
-uint64_t period;
+uint64_t sum;
+uint8_t i;
 
 void setup() {
-  strip.begin();  // Thrilling.
-  strip.show();   // all show default (0,0,0) values. Helps with turning on the board w/ LEDs connected
+  //pinMode(PIN_FREQ, INPUT); // almost forgot to add this
+  Serial.begin(9600);   // for testing purposes. Should remember to remove this
+  FreqMeasure.begin();  // Hop-to!
+  strip.begin();        // Thrilling.
+  strip.show();         // all show default (0,0,0) values. Helps with turning on the board w/ LEDs connected
 }
 
 // Setting things in functions might be nice to make portable code between tach implementations
 
-// *.Color(R, G, B) takes numerical RGB values (0-255, brigness) and returns a 32-bit color code
 void loop() {
 
-  phatFadeLoop(strip.Color(255, 0, 0));     // red
-  phatFadeLoop(strip.Color(0, 255, 0));     // green
-  phatFadeLoop(strip.Color(0, 0, 255));     // blue
-  phatFadeLoop(strip.Color(255, 0, 255));   // purp
-  phatFadeLoop(strip.Color(255, 255, 0));   // yellow
-  phatFadeLoop(strip.Color(0, 255, 255));   // cyan
-  phatFadeLoop(strip.Color(255, 255, 255)); // white
-
-  period = pulseIn(PIN_FREQ, HIGH); 
+  //period = pulseIn(PIN_FREQ, HIGH); 
   //It'd be nice to get an average of 3 or so. Maybe maybe not. 
   //at idle that would be ~270ms
   //at highway that would be ~56ms
   //at redline that would be ~30ms
-  // I could write an algorithm to just push the result after x ms. Might be more hassle than needed though.
-  uint64_t current_time = millis();
-  uint8_t i = 0;
-  while (current_time - millis() < 100) {
-    period += pulseIn(PIN_FREQ, HIGH);
+
+  //might be better to let the count run wild and check the if statement again a time diff with millis().
+  // in fact I will do just that
+  if (FreqMeasure.available()) {
+    sum += FreqMeasure.read();
+    uint64_t currentTime = millis();
     i++;
+    if ((currentTime - millis()) < 100) { //Just averages the period over a 100ms period. Helps with a dynamic range rather than a count measurement.
+      float frequency = FreqMeasure.countToFrequency(sum / i);  // float is fine, resolution is in 100's anyhow.
+      //SEND frequency to color algorithm here. freq is in the second if scope
+      uint16_t leadLED = (frequency / 100) - 1; // -1 because they are indexed 0-59. integer type will insure decimals are ignored.
+      
+      
+      sum = 0;
+      i = 0;
+      strip.show();
+    }
   }
-  period = period /i; // make sure decimals don't hate on uint64_t
-  // We have an average of a 100ms interval now. 10 updates a second... not too bad.
 
   // Now I'll have to decode period to RPM and associated color+LED.
   // 4 will be lit up at all times based on my dimming function I wrote in NeoPixel-Plaything.
   // 700 rpm idle means even at the bottom it'll be gucci. Off means 0rpm -> no LEDs to show()
+  
+}
+
+uint32_t determineColor(uint16_t &LEDindex) {
+  return strip.Color(0,0,0)); //temp
+                              // could just package my own colors but what the hell. This is clear in intention
+}
+
+void setPixel(uint16_t LEDindex) {
   
 }
 
@@ -124,3 +142,7 @@ void phatFadeLoop(uint32_t rgb) {
     // The fastest way would be to work off of the leading LED but it would lose the nice gradient effect I'm going for. Kinda. It would just make a gradient from the leading.
     // I could also make a very complicated algorithm to color all the LEDs which could be turned on it's head to color the trailing LED's at a lesser intensity.
     // Could be clean if I integrated it well at bit level. Something to think about at any rate...
+
+    // I should probably test a plain colored (red would be efficient, white via (0xFF, 0xFF, 0xFF) would be a power hungry) version before I throw in crazy algorithms to color LEDs, eh?
+    // I don't even know if my frequency counter works yet.
+    
