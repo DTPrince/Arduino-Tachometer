@@ -7,11 +7,15 @@
 
 // Side note: 800kHz is a 1.25 us period, so delay times and sampling won't ever really approach that limit (here)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(N_LED, PIN_LED_OUT, NEO_GRB + NEO_KHZ800); //initialize. RGB, 800kHz data rate
+//side note: I don't actually have to convert to frequency if I don't want to. If I do the conversion outside the code it's the same thing when implemented.
+uint64_t period;
 
 void setup() {
-  strip.begin();  //Thrilling.
-  strip.show();   // all show default (0,0,0) values. Helps with turning on the board
+  strip.begin();  // Thrilling.
+  strip.show();   // all show default (0,0,0) values. Helps with turning on the board w/ LEDs connected
 }
+
+// Setting things in functions might be nice to make portable code between tach implementations
 
 // *.Color(R, G, B) takes numerical RGB values (0-255, brigness) and returns a 32-bit color code
 void loop() {
@@ -23,6 +27,25 @@ void loop() {
   phatFadeLoop(strip.Color(255, 255, 0));   // yellow
   phatFadeLoop(strip.Color(0, 255, 255));   // cyan
   phatFadeLoop(strip.Color(255, 255, 255)); // white
+
+  period = pulseIn(PIN_FREQ, HIGH); 
+  //It'd be nice to get an average of 3 or so. Maybe maybe not. 
+  //at idle that would be ~270ms
+  //at highway that would be ~56ms
+  //at redline that would be ~30ms
+  // I could write an algorithm to just push the result after x ms. Might be more hassle than needed though.
+  uint64_t current_time = millis();
+  uint8_t i = 0;
+  while (current_time - millis() < 100) {
+    period += pulseIn(PIN_FREQ, HIGH);
+    i++;
+  }
+  period = period /i; // make sure decimals don't hate on uint64_t
+  // We have an average of a 100ms interval now. 10 updates a second... not too bad.
+
+  // Now I'll have to decode period to RPM and associated color+LED.
+  // 4 will be lit up at all times based on my dimming function I wrote in NeoPixel-Plaything.
+  // 700 rpm idle means even at the bottom it'll be gucci. Off means 0rpm -> no LEDs to show()
   
 }
 
@@ -52,6 +75,7 @@ void phatFadeLoop(uint32_t rgb) {
   }
   //return
 }
+
     // attachInterrupt() is, naturally, an interrupt. delay() is also an interrupt so it cannot happen at the same time.
     // Since, at the time of writing, I am initially planning on using attachInterrupt() to catch pulses, it might fight with the delay()
     // just above. In fact, the more likely issue will be delay() holding back the interrupt and skipping pulses.
@@ -89,5 +113,6 @@ void phatFadeLoop(uint32_t rgb) {
     // Coding gets people in the habit of abysmal spelling. No compiler would ever have the audacity to tell you your own variables are misspelled. 
 
     // It's been great lads, here I am reading through a million and one people's projects on creating frequency counters and all of them failed to mention that 
-    // pulseIn() is part of the standard library and WORKS JUST DANDY FOR 10us-50kHz. I mean honestly, the work is already done.
+    // pulseIn() is part of the standard library and WORKS JUST DANDY FOR 10us-3 MINUTES. I mean honestly, the work is already done.
     // Granted, it still uses interrupts to take the pulse in so the interrupt (bad) math is still relevant but I mean come on...
+    // note: 10us = 10^-5 s = 10^5 s^-1 = 100kHz, 3min = who cares.
