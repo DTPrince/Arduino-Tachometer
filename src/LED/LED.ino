@@ -1,6 +1,10 @@
 // lib to keep in mind: https://github.com/PaulStoffregen/FreqMeasure
 // I would rather write my own code but that's oft not best practice.
 // This would be done in 30 minutes if I just pulled libs from online.
+// And so it was. Problem is that I don't think the tach lead is sending a useable signal.
+// Either it has insane amounts of noise (easily choked with an inductor/RF choke as the signal is so low frequency),
+// is a sinusoid, or a 3.3V signal. Or whatever voltage it feel like, I've been assuming this signal originates from the ECU
+// rather than the alternator just based on location and the snake it split from.
 
 #include <Adafruit_NeoPixel.h>  // pushin pixels.
 #include <FreqMeasure.h>        // I might as well just take advantage of a clean implementation from someone who knows what they're on about.
@@ -17,7 +21,6 @@ uint64_t sum;
 uint8_t i;
 
 void setup() {
-  //pinMode(PIN_FREQ, INPUT); // almost forgot to add this
   Serial.begin(9600);   // for testing purposes. Should remember to remove this
   FreqMeasure.begin();  // Hop-to!
   strip.begin();        // Thrilling.
