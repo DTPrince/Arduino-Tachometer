@@ -5,7 +5,8 @@
 
 #define PIN_FREQ 8; //The lib actually defines this pin. Weird, but whatever. Non-PWM.
 
-LiquidCrystal lcd(12, 11, 2, 3, 4, 5); // can use whatever I want so long as it isn't pin 8
+LiquidCrystal lcd(12, 11, 2, 3, 4, 5);  // can use whatever I want so long as it isn't pin 8
+                                        // (rs=12, enable=11, d4=2, d5=3, d6=4, d7=5)
 uint64_t sum;
 uint8_t i;
 
