@@ -10,7 +10,13 @@ I suspect the arduino will do almost all of the work in terms of circuitry. Powe
 
 As a side note (one of many), the Edison looks rather interesting. It could be a lot of fun to program it outside of the Arduino IDE as it doesn't need much more than the Intel/Atom Eclipse loaf to hit play. (I suppose the sdk/dev chain and g++ would be just as good but Eclipse would handle lib updates and linking. GDB practice would be nice though.)  I've never done programming for and ADC interface but I mean, come on. A square wave is practically the ideal output for the D side of the ADC and it happens to also be on the A side. Hardware addresses.
 Musings on musings. On musings.  
-\beta test
+
+So the code is actually largely done other than fitting some real-life things to ideal code and maybe error handling+checks. The work I have left to do is probably all analog and IC components. I might have to make an amplifier for the signal and then convert to square. Though let's be honest here, I don't care about how pretty the resulting sine wave is so long as I can keep track of the accuracy of the positive logic level timing. Which means I can do damn well as much as I please concerning the amplifier. I don't even need the -wave so I can let it clip provided. I don't swing it so hard it goes into reverse-conduction/breakdown.  
+Which means the uber simple solution is to throw a schmitt trigger into a comparator with 0V & +5V supply voltages. I maintain the timing, ignore the diode drops, get my boosted square wave out as if from a voltage follower, and could drive the base with damn near any signal.
+
+God I wish I had an oscilloscope.  
+Here I am going "yeah, a vortex tube would be sick! I could cool my beer with the dying wishes of prehistoric reptiles as they combust in 4L of fury. That's worth $180+ fo sho'." Meanwhile... nice entry-level oscilloscope: $300, could use on countless projects for years. Too damn expensive.  
+I don't know why that is in a README. Luxury of nobody looking at your work I suppose.
 
 ## Wave Assumptions
 
