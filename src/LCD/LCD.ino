@@ -5,7 +5,7 @@
 
 #define PIN_FREQ 8; //The lib actually defines this pin. Weird, but whatever. Non-PWM.
 
-LiquidCrystal lcd(7, 8, 9, 10, 11, 12); //shifter to the latter pins to avoid pin 2, which is used for the read-in.
+LiquidCrystal lcd(12, 11, 2, 3, 4, 5); // can use whatever I want so long as it isn't pin 8
 uint64_t sum;
 uint8_t i;
 
@@ -29,7 +29,10 @@ void loop() {
                     // I imagine the compiler would optimize this already, doubly so since it's float type but... Eh.
       float frequency = FreqMeasure.countToFrequency(sum / i);  // float is great, I don't care about decimals anywho.
       Serial.println(frequency);
-      test(leadLED, strip.Color(255,0,0));
+      lcd.setCursor(0,0);
+      lcd.print("RPM:");
+      lcd.setCursor(0,1);
+      lcd.print(frequency);
       
       sum = 0;
       i = 0;
