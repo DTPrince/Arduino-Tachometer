@@ -41,9 +41,11 @@ void loop() {
     uint64_t currentTime = millis();
     i++;
     if ((currentTime - millis()) < 100) { //Just averages the period over a 100ms period. Helps with a dynamic range rather than a count measurement.
+    //if (i > 2) {  //testing code
       float frequency = FreqMeasure.countToFrequency(sum / i);  // float is fine, resolution is in 100's anyhow.
       //SEND frequency to color algorithm here. freq is in the second if scope
       uint16_t leadLED = (frequency / 100) - 1; // -1 because they are indexed 0-59. integer type will insure decimals are ignored.
+      Serial.println(leadLED);
       test(leadLED, strip.Color(255,0,0));
       
       sum = 0;
@@ -62,11 +64,9 @@ uint32_t determineColor(uint16_t &LEDindex) {
                               // could just package my own colors but what the hell. This is clear in intention
 }
 
-void setPixel(uint16_t LEDindex) {
-  
-}
-
 void test(uint16_t LEDindex, uint32_t rgb) {
+  if (LEDindex > 59)
+    return;  //This is mostly for testing. And stray shit.
   strip.setPixelColor(LEDindex, rgb); //set lead pixel
   uint8_t r,g,b;
   //extract colors:
@@ -77,8 +77,10 @@ void test(uint16_t LEDindex, uint32_t rgb) {
   strip.setPixelColor(LEDindex-1, r >> 1, g >> 1, b >> 1);  // dims previous
   strip.setPixelColor(LEDindex-2, r >> 2, g >> 2, b >> 2);  // double dims double previous
   strip.setPixelColor(LEDindex-3, r >> 3, g >> 3, b >> 3);  // you get the idea
-  strip.setPixelColor(LEDindex-4, 0x00, 0x00, 0x00);        //set off
-
+  for (uint16_t i = LEDindex-4; i > 0; i--) {
+    strip.setPixelColor(i, 0x00, 0x00, 0x00);        //set all previous off. There can be some weird jumps in the readings leading to some stranded pixels otherwise
+  }
+  
   strip.show();
   //delay is built in the the calling loop, no need for it here. show() can go here or in parent.
   // here might reduce weird interrupt calls since this frame has the attention.
