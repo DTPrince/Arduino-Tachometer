@@ -4,6 +4,20 @@ Finally getting around to that stray tachometer lead hanging around in the engin
 ## Oh the Places You'll Go
 - Dr. Seuess on programming. Probably.
 
+# Alright.
+
+So I broke down and got an oscilloscope. It's a true babe, trust me. Or don't - I won't lose sleep over it, promise. After forgetting to change the input to 1x (seriously, why is 10x default?) and pondering what I'm going to about a 144V square wave, I've finalyl gotten a look at what I'm working with. Looks more promising than I originally thought at least.  
+I had a tussle with the USB stick, but without further ado... pictures!
+
+Here is the idle RPM wave form:  
+![idle RPMs](./idleRPM.bmp)
+
+Here's a ~2k RPM:
+![a bit o' revin'](./mildrevRPM.bmp)
+
+This one was loud enough to scare me as I was manually actuating the throttle body. (At least I had eye protection, right? Thanks pops.)
+![I'm not sure the speed, it was loud. If I had a tachometer, I would tell you.](./loudnoisesRPM.bmp)
+
 ## Musings
 
 I suspect the arduino will do almost all of the work in terms of circuitry. Power and pull-up/pull-down resistors are just about the only things needed, I think. Powering the arduino and display from a battery seems like a non-ideal way to go about things but I need to see what kind of power the car battery can provide. A serialized LED display will probably not tax the battery too hard but I will probably have to regulate the voltage some how due to the fact that the cold battery provides less voltage than when the alternator is charging it. A voltage follower could prove to be a nice way to transform the battery into a semi-supply. Really I just need to figure out how much SC current the battery can provide, or the internal resistance. I also have no idea what kind of output impedance the battery has, so that makes a voltage follower that much more attractive.
