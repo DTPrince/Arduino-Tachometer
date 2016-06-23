@@ -30,8 +30,8 @@ void loop() {
       float frequency = FreqMeasure.countToFrequency(sum / i);  // float is fine, resolution is in 100's anyhow.
       //SEND frequency to color algorithm here. freq is in the second if scope
       //decode to 7-bit binary. Keep first/few LEDs free for status lights?
-      Serial.println(frequency);
-      
+      Serial.println(frequency * 32/3);
+
       // Since the index is in binary anyhow, I might just be able to do some bit compares to easily turn on/off LED's.
       // As in, I already have a binary version of the indexing, I only need to translate a bit between RPMs->index. Which I did in the non binary version.
       // cast to integer from float -> divide by 100, call it good.
@@ -49,4 +49,3 @@ uint32_t determineColor(uint16_t &LEDindex) {
   return strip.Color(0,0,0); //temp
                              // could just package my own colors but what the hell. This is clear in intention
 }
-

@@ -25,16 +25,16 @@ void loop() {
     uint64_t currentTime = millis();
     i++;
     if ((currentTime - millis()) < 100) { //Just averages the period over a 100ms period. Helps with a dynamic range rather than a count measurement.
-    //if (i > 2) {  // testing code. 
+    //if (i > 2) {  // testing code.
                     // Side note: letting it reach 4 would mean a double bit shift rather than the long division route.
                     // I imagine the compiler would optimize this already, doubly so since it's float type but... Eh.
       float frequency = FreqMeasure.countToFrequency(sum / i);  // float is great, I don't care about decimals anywho.
-      Serial.println(frequency);
+      Serial.println(frequency * 32/3);  // This should likely be changed to (frequency * 32/3) since 42Hz is idle @ 700RPM
       lcd.setCursor(0,0);
       lcd.print("RPM:");
       lcd.setCursor(0,1);
       lcd.print(frequency);
-      
+
       sum = 0;
       i = 0;
     }
