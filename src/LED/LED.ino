@@ -31,8 +31,8 @@ void setup() {
 
 void loop() {
 
-  //period = pulseIn(PIN_FREQ, HIGH); 
-  //It'd be nice to get an average of 3 or so. Maybe maybe not. 
+  //period = pulseIn(PIN_FREQ, HIGH);
+  //It'd be nice to get an average of 3 or so. Maybe maybe not.
   //at idle that would be ~270ms
   //at highway that would be ~56ms
   //at redline that would be ~30ms
@@ -47,10 +47,10 @@ void loop() {
     //if (i > 2) {  //testing code
       float frequency = FreqMeasure.countToFrequency(sum / i);  // float is fine, resolution is in 100's anyhow.
       //SEND frequency to color algorithm here. freq is in the second if scope
-      uint16_t leadLED = (frequency / 100) - 1; // -1 because they are indexed 0-59. integer type will insure decimals are ignored.
+      uint16_t leadLED = (frequency / 6) - 1; // -1 because they are indexed 0-59. integer type will insure decimals are ignored.
       Serial.println(leadLED);
       test(leadLED, strip.Color(255,0,0));
-      
+
       sum = 0;
       i = 0;
     }
@@ -59,7 +59,7 @@ void loop() {
   // Now I'll have to decode period to RPM and associated color+LED.
   // 4 will be lit up at all times based on my dimming function I wrote in NeoPixel-Plaything.
   // 700 rpm idle means even at the bottom it'll be gucci. Off means 0rpm -> no LEDs to show()
-  
+
 }
 
 uint32_t determineColor(uint16_t &LEDindex) {
@@ -83,7 +83,7 @@ void test(uint16_t LEDindex, uint32_t rgb) {
   for (uint16_t i = LEDindex-4; i > 0; i--) {
     strip.setPixelColor(i, 0x00, 0x00, 0x00);        //set all previous off. There can be some weird jumps in the readings leading to some stranded pixels otherwise
   }
-  
+
   strip.show();
   //delay is built in the the calling loop, no need for it here. show() can go here or in parent.
   // here might reduce weird interrupt calls since this frame has the attention.
@@ -92,40 +92,40 @@ void test(uint16_t LEDindex, uint32_t rgb) {
     // attachInterrupt() is, naturally, an interrupt. delay() is also an interrupt so it cannot happen at the same time.
     // Since, at the time of writing, I am initially planning on using attachInterrupt() to catch pulses, it might fight with the delay()
     // just above. In fact, the more likely issue will be delay() holding back the interrupt and skipping pulses.
-    // Evidently, delayMicroseconds() does not use a counter so it should work without calling an ISR (interrupt service routine). 
+    // Evidently, delayMicroseconds() does not use a counter so it should work without calling an ISR (interrupt service routine).
     // Since an ISR is like a first date and drops everything for you, frequency should be declared volatile since it will change seemingly at random so far as the compiler can tell.
     // thinking: attachInterrupt(digitalPinToInterrupt(PIN_FREQ), ISR-to-call, RISING);
     // RISING means it will interrupt when the pin goes from low->high. I wonder how it would catch sinusoids.
     // Probably would just watch for forward conduction on the transistor. Which would be weird as it would act as a small signal amplifier for the non-linear portion of the IV curve.
-    // since the interrupt should only increment freq, it should be an extraordinarily fast interrupt. 
+    // since the interrupt should only increment freq, it should be an extraordinarily fast interrupt.
     // I don't know how time will be kept at this moment though. (CLK register?)
-    // 
+    //
     // One thing I only just realized as I'm perusing time libraries, if I simply increment a tick variable for each rising edge,
     // I'll incremend indefinitely until it stops, and the delta-t will only grow as well leading to either a number larger than the container
     // or an extremely memory-hungry progream. Which isn't great for an arduino.
     // If I were running this on a desktop/laptop, it would be fun to construct a circular queue (maybe even a deque) object that
     // logs the time of the tick and calculate frequency from the time diff between itself and the next node (would require populating before use)
     // Then it would move the the next node and overwrite it, continuing the loop. tail = head.
-    
-    // millis() diffs is an interesting option worth thinking about, the only problem being that the update would still have to be regular.
-    // Which presents a problem because although diffs can be floating wherever (who cares about start/fin when you just want the diff), 
-    // triggering a new segment to watch (start/fin pair. Likely start = fin, fin = new <whatever>) would be unreliable. The diff would always have a ~fairly accurate
-    // time measurement but the span could not be of a guaranteed length. Maybe that won't matter, who knows. 
 
-    // Napkin math: if an idle is at ~700 RPM, that's 11&2/3rds rps. 11 ticks a second is a pleasantly large number to work with. 
+    // millis() diffs is an interesting option worth thinking about, the only problem being that the update would still have to be regular.
+    // Which presents a problem because although diffs can be floating wherever (who cares about start/fin when you just want the diff),
+    // triggering a new segment to watch (start/fin pair. Likely start = fin, fin = new <whatever>) would be unreliable. The diff would always have a ~fairly accurate
+    // time measurement but the span could not be of a guaranteed length. Maybe that won't matter, who knows.
+
+    // Napkin math: if an idle is at ~700 RPM, that's 11&2/3rds rps. 11 ticks a second is a pleasantly large number to work with.
     // This means that 11-12 interrupts would be called every second at idle, or ~20ms tops (probably much less) of pin 2 hogging the Arduino.
-    // At 3.2k RPM, that's 53&1/3rd rps. Significant because it is normal to accelerate between those rpm ranges w/ a 4.0L in gears 1-3. 
+    // At 3.2k RPM, that's 53&1/3rd rps. Significant because it is normal to accelerate between those rpm ranges w/ a 4.0L in gears 1-3.
     // My car is manual so it gives me even more slack in RPM calculations. However, 53 pulses a second is now ~100ms of time (I'm being extremely generous when saying an increment will take 2ms. It's probably less than 1.)
-    // At redline: 5.6k RPM = 93&1/3rd rps. 1/5th of a second could be worse, honestly. 
+    // At redline: 5.6k RPM = 93&1/3rd rps. 1/5th of a second could be worse, honestly.
     // If I don't delay strip.show()'s and let it push whenever it wants I wouldn't even have to worry about it. Additionally, the interrupts do not happen in a chunk, they're continuously spread over the second.
     // Lots of cracks that can be filled.
-    
+
     // A better way of looking at it is at idle, there will be an interrupt every ~91ms, and at redline there will be an interrupt every ~11ms. Easily workable.
     // ^ this line is all anyone should read. ^
 
-    // Coding gets people in the habit of abysmal spelling. No compiler would ever have the audacity to tell you your own variables are misspelled. 
+    // Coding gets people in the habit of abysmal spelling. No compiler would ever have the audacity to tell you your own variables are misspelled.
 
-    // It's been great lads, here I am reading through a million and one people's projects on creating frequency counters and all of them failed to mention that 
+    // It's been great lads, here I am reading through a million and one people's projects on creating frequency counters and all of them failed to mention that
     // pulseIn() is part of the standard library and WORKS JUST DANDY FOR 10us-3 MINUTES. I mean honestly, the work is already done.
     // Granted, it still uses interrupts to take the pulse in so the interrupt (bad) math is still relevant but I mean come on...
     // note: 10us = 10^-5 s = 10^5 s^-1 = 100kHz, 3min = who cares.
@@ -140,4 +140,3 @@ void test(uint16_t LEDindex, uint32_t rgb) {
 
     // I should probably test a plain colored (red would be efficient, white via (0xFF, 0xFF, 0xFF) would be a power hungry) version before I throw in crazy algorithms to color LEDs, eh?
     // I don't even know if my frequency counter works yet.
-    
