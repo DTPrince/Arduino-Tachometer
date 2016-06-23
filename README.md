@@ -35,6 +35,9 @@ Bad math estimation time:
 If it is at 42Hz @ 700RPM, that's a convenient 6Hz/100RPM ratio. At 5600 redline, it ~should be 336Hz. That's still practically DC.  
 So the code should easily reflect this by changing rpm / 100 -> rpm / 6. Woo!
 
+UPDATE: Concerning active regions of the FETs on the ATmega328, they're actually quite generous. The inactive region lasts until a whopping 1.5V and turns on at 3V.  
+However, the absolute max voltage is 6V. So I'm going to have to tone down the signal a bit. Interestingly, the power source of the Arduino is used as VCC reference. So if it is running on a dying battery, HIGH will be a lower value than when the battery was full. Good to know. (Assuming that info can be trusted...)
+
 ## Musings
 
 I suspect the arduino will do almost all of the work in terms of circuitry. Power and pull-up/pull-down resistors are just about the only things needed, I think. Powering the arduino and display from a battery seems like a non-ideal way to go about things but I need to see what kind of power the car battery can provide. A serialized LED display will probably not tax the battery too hard but I will probably have to regulate the voltage some how due to the fact that the cold battery provides less voltage than when the alternator is charging it. A voltage follower could prove to be a nice way to transform the battery into a semi-supply. Really I just need to figure out how much SC current the battery can provide, or the internal resistance. I also have no idea what kind of output impedance the battery has, so that makes a voltage follower that much more attractive.
