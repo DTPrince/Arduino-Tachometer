@@ -38,7 +38,7 @@ So the code should easily reflect this by changing rpm / 100 -> rpm / 6. Woo!
 UPDATE: Concerning active regions of the FETs on the ATmega328, they're actually quite generous. The inactive region lasts until a whopping 1.5V and turns on at 3V.  
 However, the absolute max voltage is 6V. So I'm going to have to tone down the signal a bit. Interestingly, the power source of the Arduino is used as VCC reference. So if it is running on a dying battery, HIGH will be a lower value than when the battery was full. Good to know. (Assuming that info can be trusted...)
 
-![Maybe.](./ghettoScratch.png)
+![Maybe.](./ghettoScratch.jpg)
 
 So. As seen above in my chicken scratch (forgive the phone picture) I might be able to reduce a lot of the noise, isolate both sides, and reduce the voltage to a steady 5V while acting as a semi-decent source. Sounds too good to be true, right? I kinda agree. But it is only two parts (alright, an op-amp is actually a ton of parts but whatever) so I might as well run some tests on it. I don't like the idea of a resistor voltage divider out of principal but it's definitely simple.  
 Another advantage of this setup is that if I run the Vcc+ off of the 5V out power pin on the Arduino (potentially a terrible idea), the HIGH reference will be against itself and since the tach lead is isolated from the output, I don't actually care what the true voltage is. Yay! Sounds like a terrible idea to let the thing run loose and operate on whatever voltage levels it wants (if running on a battery) but what it actually means is that it self-corrects automatically just by obeying physics. It simply has no choice.  
