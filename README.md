@@ -10,15 +10,15 @@ So I broke down and got an oscilloscope. It's a true babe, trust me. Or don't - 
 I had a tussle with the USB stick, but without further ado... pictures!
 
 Here is the idle RPM wave form:  
-![idle RPMs](./idleRPM.bmp)
+![idle RPMs](./no-cap/idleRPM.bmp)
 
 Here's a ~2k RPM:
-![a bit o' revin'](./mildrevRPM.bmp)
+![a bit o' revin'](./no-cap/mildrevRPM.bmp)
 
 This one was loud enough to scare me as I was manually actuating the throttle body. (At least I had eye protection, right? Thanks, pops.)
-![I'm not sure the speed, it was loud. If I had a tachometer, I would tell you.](./loudnoisesRPM.bmp)
+![I'm not sure the speed, it was loud. If I had a tachometer, I would tell you.](./no-cap/loudnoisesRPM.bmp)
 
-So a few things are immediately noticeable. First, see the Vmax in the first picture? It says ~8V. The V/div is at 2V/div, so you can see for yourself that the signal is sitting around 6V. Is the oscilloscope wrong? No, it's just erratic. Not a huge problem since the meat of the signal is sitting at 6V, I just need to make sure I don't blow a transistor or related IC with the bumps.
+So a few things are immediately noticeable. First, see the Vmax in the first picture? It says ~8V. ~~The V/div is at 2V/div, so you can see for yourself that the signal is sitting around 6V. Is the oscilloscope wrong? No, it's just erratic. Not a huge problem since the meat of the signal is sitting at 6V, I just need to make sure I don't blow a transistor or related IC with the bumps.~~ Don't read that. Clearly I had been staring at lines for way too long as anyone with eyes can see that is 5V. I ran a bunch of tests later (a few days later) and found a whole lot of 5V. Reliably and everywhere. Even the spikes are limited to ~5V. Imagine that. Will update the bottom with new awesome differential signal pics and hot zoom action.
 
 Something more annoying than floating voltage levels is the tiny hair-like spikes of a signal that show up in all the pictures. There is actually a huge one in the dead center of the idle RPM and might even be what the scope is measuring 8.5V from. Now noise will always be a huge problem in an engine bay since there are ~~antennas~~ cables lining a metal cage (at least Faraday is on our side) that surrounds a whirling metal block of explosive death. Pretty great way to hose down an area in a wide variety of weak signals. For once I wish I was actually working with a pure FM sine wave because I could easily choke/isolate that signal and then convert it to something that accurately and reliably triggers a FET with a few robust components. However, I'm given the square wave and the whole famn damily of sine waves in tow. So something like an RF choke or a parallel cap to drain off high frequencies will have to effect of boxing the ears of my lovely square wave the ECU made for me. I still might do it, mind you since a tiny cap shunt (think a puff) would be a fraction of a cent in parts and, if ceramic, function splendidly in a hot engine bay. I could get away with something like a tiny cap largely because of how quickly the noise appears and disappears. Since it's not reliably frequency dependent, the usual method of looking at impedance as a function of radial frequency only hints at the right answer. If you want real numbers, use the derivative definition of voltage and current. Mayhaps I will do a math post on that later just to see exactly where the cutoff would be.  
 Anyhow, tiny blips = supah derivatives => easy to filter.
@@ -43,6 +43,9 @@ However, the absolute max voltage is 6V. So I'm going to have to tone down the s
 So. As seen above in my chicken scratch (forgive the phone picture) I might be able to reduce a lot of the noise, isolate both sides, and reduce the voltage to a steady 5V while acting as a semi-decent source. Sounds too good to be true, right? I kinda agree. But it is only two parts (alright, an op-amp is actually a ton of parts but whatever) so I might as well run some tests on it. I don't like the idea of a resistor voltage divider out of principal but it's definitely simple.  
 Another advantage of this setup is that if I run the Vcc+ off of the 5V out power pin on the Arduino (potentially a terrible idea), the HIGH reference will be against itself and since the tach lead is isolated from the output, I don't actually care what the true voltage is. Yay! Sounds like a terrible idea to let the thing run loose and operate on whatever voltage levels it wants (if running on a battery) but what it actually means is that it self-corrects automatically just by obeying physics. It simply has no choice.  
 I have slight misgivings about how much current the Arduino can source though. The op-amp should draw very little as it is being input to at least a MOhm and likely closer to 100MOhm (the analog pins have a ~100MOhm impedance which should be similar)
+
+**Will update with new-fangled pics soon**  
+Long story short, everything is gucci and I might be able to just ditch the op-amp. 100% a digital signal, you can even find relics of the CLK frequency, or at least a multiple of it.
 
 ## Musings
 
