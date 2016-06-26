@@ -47,6 +47,8 @@ I have slight misgivings about how much current the Arduino can source though. T
 **Will update with new-fangled pics soon**  
 Long story short, everything is gucci and I might be able to just ditch the op-amp. 100% a digital signal, you can even find relics of the CLK frequency, or at least a multiple of it.
 
+Pictures are still not in README but they are in uploaded picture folders. Might do write up after getting the 47pF cap tests done.
+
 ## Musings
 
 I suspect the arduino will do almost all of the work in terms of circuitry. Power and pull-up/pull-down resistors are just about the only things needed, I think. Powering the arduino and display from a battery seems like a non-ideal way to go about things but I need to see what kind of power the car battery can provide. A serialized LED display will probably not tax the battery too hard but I will probably have to regulate the voltage some how due to the fact that the cold battery provides less voltage than when the alternator is charging it. A voltage follower could prove to be a nice way to transform the battery into a semi-supply. Really I just need to figure out how much SC current the battery can provide, or the internal resistance. I also have no idea what kind of output impedance the battery has, so that makes a voltage follower that much more attractive.
