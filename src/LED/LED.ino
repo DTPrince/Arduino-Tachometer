@@ -17,14 +17,16 @@
 // Side note: 800kHz is a 1.25 us period, so delay times and sampling won't ever really approach that limit (here)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(N_LED, PIN_LED_OUT, NEO_GRB + NEO_KHZ800); //initialize. RGB, 800kHz data rate
 //side note: I don't actually have to convert to frequency if I don't want to. If I do the conversion outside the code it's the same thing when implemented.
-uint64_t sum;
+uint32_t sum = 0;
 uint8_t i;
 
 void setup() {
-  Serial.begin(9600);   // for testing purposes. Should remember to remove this
+  //Serial.begin(9600);   // for testing purposes. Should remember to remove this
   FreqMeasure.begin();  // Hop-to!
   strip.begin();        // Thrilling.
   strip.show();         // all show default (0,0,0) values. Helps with turning on the board w/ LEDs connected
+  test_fadeLoop(strip.Color(255,255,255));  //Send white so it is obvious which one goes out when it runs by
+  
 }
 
 // Setting things in functions might be nice to make portable code between tach implementations
@@ -41,14 +43,17 @@ void loop() {
   // in fact I will do just that
   if (FreqMeasure.available()) {
     sum += FreqMeasure.read();
+    //Serial.println(sum);
     uint64_t currentTime = millis();
     i++;
-    if ((currentTime - millis()) < 100) { //Just averages the period over a 100ms period. Helps with a dynamic range rather than a count measurement.
-    //if (i > 2) {  //testing code
-      float frequency = FreqMeasure.countToFrequency(sum / i);  // float is fine, resolution is in 100's anyhow.
+    //if ((currentTime - millis()) < 100) { //Just averages the period over a 100ms period. Helps with a dynamic range rather than a count measurement.
+    if (i > 2) {  //testing code
+      sum = sum / i;
+      float frequency = FreqMeasure.countToFrequency(sum);  // float is fine, resolution is in 100's anyhow.
       //SEND frequency to color algorithm here. freq is in the second if scope
       uint16_t leadLED = (frequency / 6) - 1; // -1 because they are indexed 0-59. integer type will insure decimals are ignored.
-      Serial.println(leadLED);
+      //Serial.println(frequency);
+      //Serial.println(leadLED);
       test(leadLED, strip.Color(255,0,0));
 
       sum = 0;
@@ -64,7 +69,7 @@ void loop() {
 
 uint32_t determineColor(uint16_t &LEDindex) {
   return strip.Color(0,0,0); //temp
-                              // could just package my own colors but what the hell. This is clear in intention
+                             // could just package my own colors but what the hell. This is clear in intention
 }
 
 void test(uint16_t LEDindex, uint32_t rgb) {
@@ -87,6 +92,28 @@ void test(uint16_t LEDindex, uint32_t rgb) {
   strip.show();
   //delay is built in the the calling loop, no need for it here. show() can go here or in parent.
   // here might reduce weird interrupt calls since this frame has the attention.
+}
+
+void test_fadeLoop(uint32_t rgb) {  // startup test. I don't want to loop for 5-ever at start so only white is being used.
+                                    // actually I might want to hard code this since it will be the same every time
+  
+  uint8_t r,g,b;     // same method as the test and likely finished design. Well, maybe.
+  //extract colors:
+  r = (uint8_t)(rgb >> 16),
+  g = (uint8_t)(rgb >> 8),
+  b = (uint8_t)rgb;
+  
+  for(uint16_t i = 0; i < strip.numPixels()+4; i++) {
+    strip.setPixelColor(i, rgb);
+    strip.setPixelColor(i-1, r >> 1, g >> 1, b >> 1);
+    strip.setPixelColor(i-2, r >> 2, g >> 2, b >> 2);
+    strip.setPixelColor(i-3, r >> 3, g >> 3, b >> 3);
+    strip.setPixelColor(i-4, 0x00, 0x00, 0x00);
+    
+    strip.show();   // fin
+    delay(200);     // 200ms delay. Could be a wide variety of things
+  }
+  //return
 }
 
     // attachInterrupt() is, naturally, an interrupt. delay() is also an interrupt so it cannot happen at the same time.
