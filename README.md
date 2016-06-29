@@ -75,6 +75,10 @@ And here's the new noise signal!
 
 Significantly improved but still peaks at ~3.5V, which is in the activation range. This is the only reason I'm going to test a 47pF cap as well.
 
+I guess the next thing to do is test the code and then get an LCD screen.  
+Finishing the binary LED algorithm is probably a good idea as well.  
+And the color-scheme for the range.
+
 ## Musings
 
 I suspect the arduino will do almost all of the work in terms of circuitry. Power and pull-up/pull-down resistors are just about the only things needed, I think. Powering the arduino and display from a battery seems like a non-ideal way to go about things but I need to see what kind of power the car battery can provide. A serialized LED display will probably not tax the battery too hard but I will probably have to regulate the voltage some how due to the fact that the cold battery provides less voltage than when the alternator is charging it. A voltage follower could prove to be a nice way to transform the battery into a semi-supply. Really I just need to figure out how much SC current the battery can provide, or the internal resistance. I also have no idea what kind of output impedance the battery has, so that makes a voltage follower that much more attractive.
