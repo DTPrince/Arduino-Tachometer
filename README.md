@@ -49,6 +49,10 @@ Long story short, everything is gucci and I might be able to just ditch the op-a
 
 Pictures are still not in README but they are in uploaded picture folders. Might do write up after getting the 47pF cap tests done.
 
+Friend is in town for the week and I haven't been able to get much done so I'll just get some picture stuff done while the coffee sits on the back burner.
+
+
+
 ## Musings
 
 I suspect the arduino will do almost all of the work in terms of circuitry. Power and pull-up/pull-down resistors are just about the only things needed, I think. Powering the arduino and display from a battery seems like a non-ideal way to go about things but I need to see what kind of power the car battery can provide. A serialized LED display will probably not tax the battery too hard but I will probably have to regulate the voltage some how due to the fact that the cold battery provides less voltage than when the alternator is charging it. A voltage follower could prove to be a nice way to transform the battery into a semi-supply. Really I just need to figure out how much SC current the battery can provide, or the internal resistance. I also have no idea what kind of output impedance the battery has, so that makes a voltage follower that much more attractive.
