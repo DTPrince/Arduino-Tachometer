@@ -51,6 +51,17 @@ Pictures are still not in README but they are in uploaded picture folders. Might
 
 Friend is in town for the week and I haven't been able to get much done so I'll just get some picture stuff done while the coffee sits on the back burner.
 
+Might as well start with the base clock evidence and proof that it is a digital signal.
+![this one.](baseclk.bmp)
+
+And here you can see that it is quite clearly just discharging a cap when turned off. An incredibly tiny cap though as the time constant is ~1us.
+![yass](./no-cap/capdischarge.bmp)
+
+Now let's get into the noisy blips. If you look at the picture above, that spike 3/4 of the way through the captured signal (the upper half of the image) is what I'm zooming in on.
+![zoomed image](./no-cap/noiseblipwhole.bmp)
+
+As evident from the 1us/div x-axis, these signals are ludicrously fast. They also go to -5V on some swings. I'd have to look up activation times of the arduino digital pins but I wouldn't be surprised if it doesn't even notice these. Still, it's less than a penny to fix. Onto the capacitor...
+
 
 
 ## Musings
