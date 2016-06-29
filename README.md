@@ -62,7 +62,18 @@ Now let's get into the noisy blips. If you look at the picture above, that spike
 
 As evident from the 1us/div x-axis, these signals are ludicrously fast. They also go to -5V on some swings. I'd have to look up activation times of the arduino digital pins but I wouldn't be surprised if it doesn't even notice these. Still, it's less than a penny to fix. Onto the capacitor...
 
+Here's the whole view:
+![yep](./cap-differentiated-signal/baseclk.bmp)
 
+The signal has grown some scruff and, curiously, a blip on the falling edge of the signal. It's tiny so I'm no worried but I will have to see what it looks like with a 47pF cap later. You can see the noise spikes in the upper half of the image are significantly shorter as well.
+
+The time constant increased by about a factor of ~20, leading me to believe the discharge was just the inevitable stray capacitance in the components. Could be from anything and everything like the FETs and diodes. (I've actually just been assuming it has FETs due to their ease of use in digital but I suppose they could be BJTs.)
+![I hope this loads.](./cap-differentiated-signal/capdischarge.bmp)
+
+And here's the new noise signal!
+![still a hoe](./cap-differentiated-signal/noiseblipzoom.bmp)
+
+Significantly improved but still peaks at ~3.5V, which is in the activation range. This is the only reason I'm going to test a 47pF cap as well.
 
 ## Musings
 
